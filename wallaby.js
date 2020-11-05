@@ -1,30 +1,11 @@
-const wallabyWebpack = require('wallaby-webpack');
-const path = require('path');
-const { find, remove } = require('lodash');
-
-const webpackConfig = require('./webpack.dev')({ isTest: true });
+const options = require('./webpack.dev')({ isTest: true });
 
 module.exports = function (wallaby) {
-	// Wallaby copies the files in its own cache folder, we need to tell webpack where that is
-	webpackConfig.context = path.join(wallaby.projectCacheDir, 'src');
-
-	webpackConfig.entryPatterns = [
-		'webpack-config/vendor.js',
-		'webpack-config/index.js',
-		'webpack-config/wallaby.test.js',
-
-		// add test files here
-		'myTestFile.ts'
-	].map(pattern => pattern.replace(/ts$/, 'js'));
-
-	// remove babel loader, wallaby takes over for us (see further down the property "compilers")
-	const { rules } = webpackConfig.module;
-	remove(rules, find(rules, { use: [{ loader: 'babel-loader' }] }));
-
-	// anything you need but .ts extension
-	webpackConfig.resolve.extensions = ['.js', '.json'];
-
-	return {
+  return {
+    // set `load: false` to all source files and tests processed by webpack
+    // (except external files),
+    // as they should not be loaded in browser,
+    // their wrapped versions will be loaded instead
 		files: [
 			{ pattern: 'src/**/*.js', load: false },
 			{ pattern: 'src/**/*.ts', load: false },
@@ -41,25 +22,19 @@ module.exports = function (wallaby) {
 			{ pattern: 'src/**/*.spec.ts', ignore: true }
 		],
 
-		// loaders: [{ loader: '@ngtools/webpack' }],
-
 		tests: [
 			{ pattern: 'src/**/test/unit/**/!(*.helpers).{js,ts}', load: false },
 			{ pattern: 'src/**/*.spec.ts', load: false }
 		],
 
-		compilers: {
-			'src/**/*.{js,ts}': wallaby.compilers.babel()
+    postprocessor: wallaby.postprocessors.webpack(options),
+
+    setup: function () {
+      // required to trigger test loading
+      window.__moduleBundler.loadTests();
 		},
 
-		postprocessor: wallabyWebpack(webpackConfig),
-
-		env: {
-			kind: 'chrome'
-		},
-
-		setup() {
-			window.__moduleBundler.loadTests();
-		}
-	};
+		debug: true,
+		trace: true
+  };
 };

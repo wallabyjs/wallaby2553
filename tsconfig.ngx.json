@@ -1,0 +1,32 @@
+{
+	"compilerOptions": {
+		"downlevelIteration": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"module": "es6",
+		"moduleResolution": "node",
+		"target": "es5",
+		"outDir": "transpiled/src",
+		"sourceMap": true,
+		"types": [
+			"jasmine",
+			"node",
+			"angular",
+			"angular-translate",
+			"angular-resource",
+			"moment",
+			"moment-timezone"
+		]
+	},
+	"files": [
+		"src/a.spec.ts"
+	],
+	"include": [
+		"src/main.ts",
+		"**/*.component.ts",
+		"**/*.spec.ts",
+		"**/*.mock.ts",
+		"**/*.d.ts"
+	]
+}

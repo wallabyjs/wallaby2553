@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+        "experimentalDecorators": true,
+		"outDir": "./build/",
+		"allowJs": true,
+		"target": "es5",
+		"module": "commonjs",
+		"sourceMap": true,
+		"noEmitOnError": true,
+		"strict": false
+	},
+	"exclude":[
+		"./grunt/current_user",
+		"./node_modules",
+		"./build",
+		"./customer_bundles"
+	]
+}
